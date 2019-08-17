@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<body onload="initEngine()">
+
+<p>Image to use:</p>
+<img id="tileset" src=".\tiles.bmp" alt="The Scream" >
+
+<p>Canvas to fill:</p>
+<canvas id="myCanvas" width="250" height="300"
+style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<p><button onclick="myCanvas()">Try it</button></p>
+<p id="TileInfo">Hello</p>
+<script>
+
+/*
+< 37
+A 38
+> 39
+V 40
+space 32
+ctrl 17
+shift 16
+alt 18
+z 90
+x 88
+c 67
+a 65
+s 83
+d 68
+q 81
+w 87
+e 69
+del 46
+end 35
+pgdwn 34
+ins 45
+home 36
+pgup 33
+
+*/
+
+var i = 0;
+var x = 0;
+var y = 0;
+var scale = 1;
+var drawLoop = null;
+var tileMap = {
+	Width:30,
+	Height:30,
+	WScale:0,
+	HScale:0,
+	img : document.getElementById("tileset"),
+	namedTiles : {
+		"1" : new Array(0,30),
+		"2" : new Array(30,30),
+		"3": new Array(60,30),
+		"4": new Array(80,30),
+		"_": new Array(0,0),
+		"#": new Array(30,0),
+		"~": new Array(60,0)
+	}
+};
+var map1 = "######\n#____#\n#____#\n#____#\n######";
+var map2 = "      \n 1    \n    2 \n      \n      ";
+var map3 = "      \n 1    \n    2 \n      \n      ";
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+
+
+window.addEventListener('keyup',this.check,false);
+
+function check(e) {
+    alert(e.keyCode);
+}
+
+function initEngine(){
+	tileMap.WScale = tileMap.Width * scale;
+	tileMap.HScale = tileMap.Height * scale;
+	drawLoop = setInterval(drawMap, 1000);
+}
+function nextCrop(sx,sy,x,y){
+  ctx.drawImage(tileMap.img,sx,sy,tileMap.Width,tileMap.Height,x,y,tileMap.WScale, tileMap.HScale);
+}
+
+function drawTile(tilePoint,x,y){  
+  document.getElementById("TileInfo").innerHTML = (tileMap.img.width);
+  ctx.drawImage(tileMap.img,tilePoint[0], tilePoint[1],tileMap.Width,tileMap.Height,x,y,tileMap.WScale, tileMap.HScale);
+}
+
+function drawRow(mapString, rowIndex){
+	var i = 0;
+	while(i<mapString.length){
+		if(tileMap.namedTiles[mapString[i]] != null){
+			drawTile(tileMap.namedTiles[mapString[i]], tileMap.WScale * i, tileMap.HScale * rowIndex)
+		}
+		i++;
+	}
+}
+
+function drawLayer(layer){
+	var i = 0;
+	var layerRows = layer.split("\n");
+	while(i<layerRows.length){
+		drawRow(layerRows[i], i)
+		i++;
+	}
+}
+
+function drawMap(){
+	try{
+		drawLayer(map1);
+	}
+	catch(err){
+		alert("Failed on bot");
+	}
+	try{
+		drawLayer(map2);
+	}
+	catch(err){
+		alert("Failed on mid");
+	}
+	try{
+		drawLayer(map3);
+	}
+	catch(err){
+		alert("Failed on top");
+	}
+}
+
+function myCanvas() {
+	map2 = "      \n  1   \n    2 \n      \n      ";
+}
+</script>
+
+</body>
+</html>
