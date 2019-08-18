@@ -3,48 +3,26 @@
 <body onload="initEngine()">
 
 <p>Image to use:</p>
-<img id="tileset" src=".\tiles.bmp" alt="The Scream" >
+<img id="tileset" src=".\tiles.png" alt="The Scream" >
 
 <p>Canvas to fill:</p>
-<canvas id="myCanvas" width="250" height="300"
-style="border:1px solid #d3d3d3;">
-Your browser does not support the HTML5 canvas tag.</canvas>
+<center>
+<canvas id="myCanvas" width="800" height="600"
+style="border:1px solid #d3d3d3">
+Your browser does not support the HTML5 canvas tag.</canvas></center>
 
 <p><button onclick="myCanvas()">Try it</button></p>
+<p><button onclick="destroyActor(player)">Try it</button></p>
+<p><button onclick="demoMove()">Try it</button></p>
 <p id="TileInfo">Hello</p>
 <script>
 
-/*
-< 37
-A 38
-> 39
-V 40
-space 32
-ctrl 17
-shift 16
-alt 18
-z 90
-x 88
-c 67
-a 65
-s 83
-d 68
-q 81
-w 87
-e 69
-del 46
-end 35
-pgdwn 34
-ins 45
-home 36
-pgup 33
 
-*/
 
 var i = 0;
 var x = 0;
 var y = 0;
-var scale = 1;
+var scale = 1.5;
 var drawLoop = null;
 var tileMap = {
 	Width:30,
@@ -56,40 +34,108 @@ var tileMap = {
 		"1" : new Array(0,30),
 		"2" : new Array(30,30),
 		"3": new Array(60,30),
-		"4": new Array(80,30),
+		"4": new Array(90,30),
 		"_": new Array(0,0),
 		"#": new Array(30,0),
 		"~": new Array(60,0)
 	}
 };
-var map1 = "######\n#____#\n#____#\n#____#\n######";
-var map2 = "      \n 1    \n    2 \n      \n      ";
-var map3 = "      \n 1    \n    2 \n      \n      ";
+var player = {
+	x: 1,
+	y: 1,
+	z: 1,
+	sprite: "3"
+}
+var enemy = {
+	x: 4,
+	y: 3,
+	z: 1,
+	sprite: "4"
+}
+
+var keys = {
+	38:new Array("Up", "Movement"),
+	40:new Array("Down", "Movement"),
+	37:new Array("Left", "Movement"),
+	39:new Array("Right", "Movement")
+
+}
+var mapLayers = new Array("########\n#______#\n#______#\n#______#\n########", "        \n        \n        \n        \n        ", "         \n        \n        \n        \n        ");
 
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 
 
 window.addEventListener('keyup',this.check,false);
-
 function check(e) {
-    alert(e.keyCode);
+/*
+[<-37][A-38][>-39][V-40]
+[space-32][ctrl-17][shift-16][alt-18]
+[z-90][x-88][c-67]
+[a-65][s-83][d-68]
+[q-81][w-87][e-69]
+[del-46][end-35][pgdwn-34]
+[ins-45][home-36][pgup-33]
+*/
+
+  document.getElementById("TileInfo").innerHTML = keys[e.keyCode];
+  if(keys[e.keyCode][1]="Movement"){
+	doMove(keys[e.keyCode])
+	}
 }
 
 function initEngine(){
 	tileMap.WScale = tileMap.Width * scale;
 	tileMap.HScale = tileMap.Height * scale;
-	drawLoop = setInterval(drawMap, 1000);
+	drawLoop = setInterval(drawMap, 50);
 }
-function nextCrop(sx,sy,x,y){
-  ctx.drawImage(tileMap.img,sx,sy,tileMap.Width,tileMap.Height,x,y,tileMap.WScale, tileMap.HScale);
+
+function doMove(dir){
+	destroyActor(player)
+	switch(dir[0]){
+	case "Up":
+		player.y--;
+		break;
+	case "Down":
+		player.y++;
+		break;
+	case "Left":
+		player.x--;
+		break;
+	case "Right":
+		player.x++;
+		break;	
+	}
+}
+
+function destroyActor(actor){
+	var lineLen=mapLayers[1].indexOf("\n")+1
+	var newInd = (lineLen*actor.y)+actor.x;
+	mapLayers[1] = mapLayers[1].substring(0, newInd) + " " + mapLayers[1].substring(newInd+1);
+}
+function drawActor(actor){
+	var lineLen=mapLayers[player.z].indexOf("\n")+1
+	var newInd = (lineLen*actor.y)+actor.x;
+	mapLayers[player.z] = mapLayers[player.z].substring(0, newInd) + actor.sprite + mapLayers[player.z].substring(newInd+1);
+}
+
+function demoMove(){
+	destroyActor(player)
+	var lineLen=mapLayers[1].indexOf("\n")+1
+	player.x++;
+	if (player.x > lineLen-3){
+		player.x=1;
+		player.y++;
+	}
+	if (player.y > 3){
+		player.x=1;
+		player.y=1;
+	}
 }
 
 function drawTile(tilePoint,x,y){  
-  document.getElementById("TileInfo").innerHTML = (tileMap.img.width);
   ctx.drawImage(tileMap.img,tilePoint[0], tilePoint[1],tileMap.Width,tileMap.Height,x,y,tileMap.WScale, tileMap.HScale);
 }
-
 function drawRow(mapString, rowIndex){
 	var i = 0;
 	while(i<mapString.length){
@@ -99,7 +145,6 @@ function drawRow(mapString, rowIndex){
 		i++;
 	}
 }
-
 function drawLayer(layer){
 	var i = 0;
 	var layerRows = layer.split("\n");
@@ -108,30 +153,17 @@ function drawLayer(layer){
 		i++;
 	}
 }
-
 function drawMap(){
-	try{
-		drawLayer(map1);
+	var i = 0;
+	while(i<mapLayers.length){
+		drawLayer(mapLayers[i])
+		i++;
 	}
-	catch(err){
-		alert("Failed on bot");
-	}
-	try{
-		drawLayer(map2);
-	}
-	catch(err){
-		alert("Failed on mid");
-	}
-	try{
-		drawLayer(map3);
-	}
-	catch(err){
-		alert("Failed on top");
-	}
+	drawActor(player, mapLayers[player.z]);	
+	drawActor(enemy, mapLayers[enemy.z]);
 }
 
 function myCanvas() {
-	map2 = "      \n  1   \n    2 \n      \n      ";
 }
 </script>
 
