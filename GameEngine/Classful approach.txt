@@ -1,0 +1,45 @@
+class Atom{
+	constructor(x,y,z,dir,tile,collisionLayers){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.dir = dir;
+		this.tile = tile;	
+		this.collisionLayers = collisionLayers;
+	}
+	function boundaryAction(BoundX, BoundY){}
+	function collisionAction(ColX, ColY, ColActor){}
+}
+class Tile extends Atom{
+	constructor(x,y,z,dir,tile,collisionLayers){
+		super(x,y,z,dir,tile,collisionLayers)
+		this.collisionLayers.push("Tile")
+	}
+
+}
+class Item extends Atom{
+	constructor(x,y,z,dir,tile,collisionLayers){
+		super(x,y,z,dir,tile,collisionLayers)
+		this.collisionLayers.push("Item")
+	}
+}
+class Actor extends Atom{
+	constructor(x,y,z,dir,tile,collisionLayers,health,damageModifier){
+		super(x,y,z,dir,tile,collisionLayers)
+		this.health = health;
+		this.damageModifier = damageModifier;
+		this.collisionLayers.push("Actor")
+	}
+	function() fireAction{}
+	function(newZ) jumpAction{}
+	function(moveDir) moveAction{}
+}
+Class Player extends Actor{
+	constructor(x,y,z,dir,tile,collisionLayers,health,damageModifier){
+		super(x,y,z,dir,tile,collisionLayers,health,damageModifier)
+		this.collisionLayers.push("Player")
+	}
+
+
+}
+
