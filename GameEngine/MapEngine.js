@@ -2,7 +2,7 @@
 function initMapEngine(map){
 	tileMap.WScale = tileMap.Width * scale;
 	tileMap.HScale = tileMap.Height * scale;
-	drawLoop = setInterval(drawMap.bind(map), drawDelay, map);
+	drawLoop = setInterval(drawMap, drawDelay, map);
 }
 
 //First step of drawing a frame - pull the rows and draw each row
