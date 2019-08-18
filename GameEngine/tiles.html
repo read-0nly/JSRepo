@@ -54,10 +54,13 @@ var enemy = {
 }
 
 var keys = {
-	38:new Array("Up", "Movement"),
-	40:new Array("Down", "Movement"),
-	37:new Array("Left", "Movement"),
-	39:new Array("Right", "Movement")
+	38:new Array("Up", "PlayerMovement"),
+	40:new Array("Down", "PlayerMovement"),
+	37:new Array("Left", "PlayerMovement"),
+	39:new Array("Right", "PlayerMovement"),
+	32:new Array("Jump", "PlayerMovement"),
+	39:new Array("Fire", "PlayerAction"),
+	39:new Array("Menu", "UIAction"),
 
 }
 var mapLayers = new Array("########\n#______#\n#______#\n#______#\n########", "        \n        \n        \n        \n        ", "         \n        \n        \n        \n        ");
@@ -79,7 +82,7 @@ function check(e) {
 */
 
   document.getElementById("TileInfo").innerHTML = keys[e.keyCode];
-  if(keys[e.keyCode][1]="Movement"){
+  if(keys[e.keyCode][1]="PlayerMovement"){
 	doMove(keys[e.keyCode])
 	}
 }
