@@ -5,10 +5,11 @@ enemies = new Array()
 rays = new Array()
 walls = new Array()
 floors = new Array()
-
-//Create player and add to list of actors
-player = new Player(1,1,1,3,"player",null,100,1,keys)
+actors.push(new Actor(8,8,1,3,"enemy",null,100,1,10))
+player = new Player(1,1,1,3,"player",null,100,1,keys,10)
 actors.push(player)
+window.addEventListener('keyup',player.check,false);
+//Create player and add to list of actors
 
 //Base Atom is meant to be generic as all hell. As such, extended classes for tile types and item types shouldn't be defined there. The Engine Config is meant to sit on top of the mapengine and atom to create the rest of the game logic from those parts.
 
@@ -25,8 +26,36 @@ class Wall extends Tile{
 	}	
 }
 
+class Flame extends Actor{
+	//Base type for a player - also binds keyset
+	constructor(x,y,health,damageModifier,baseDamage,tick){
+		super(x,y,2,3,"flame",null,health,damageModifier, baseDamage,tick)
+		this.collisionLayers.push("Player")
+		this.collisionLayers.push("Fire")
+	}
+	tickAction(self){
+		var i = 0;
+		var stack = map[self.x][self.y];
+		while(i<stack.length){
+			if(stack[i] != null && (typeof stack[i] != "undefined")){
+				if((typeof stack[i].takeDamage) == "function"){
+					stack[i].takeDamage(self.baseDamage)
+				}
+			}
+			i++;
+		}
+		var i = 0;
+		console.log(self.getClass() + "ticked")
+	}
+}
+
+function spawnFlame(x, y){	
+	spawnAtom(x,y,2, (new Flame(x,y,100,1,30,500)))
+	map[x][y][2].initAuto(map[x][y][2]);
+}
+
 function initGame(){
-	initEngine(mapAutoGen())
+	initEngine(mapAutoGen())	
 }
 
 

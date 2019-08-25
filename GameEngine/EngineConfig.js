@@ -5,7 +5,7 @@ var ctx = c.getContext("2d");
 
 //Base Parameters
 var scale = 1;
-var drawDelay = 500;
+var drawDelay = 50;
 var wrap = true;
 
 //Define the array that will hold the current map
@@ -23,6 +23,7 @@ var tileMap = {
 		"wall" : new Array(30,0),
 		"enemy": new Array(30,30),
 		"player": new Array(60,30),
+		"flame": new Array(120,0),
 	}
 };
 

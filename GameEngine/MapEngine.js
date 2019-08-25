@@ -33,7 +33,7 @@ function drawStack(colArr, colIndex, rowIndex){
 	var i = 0;
 	while(i<colArr.length){
 		if((typeof colArr[i]) != "undefined" && colArr[i] != null ){
-			drawTile(tileMap.namedTiles[colArr[i].tile], tileMap.WScale * colIndex, tileMap.HScale * rowIndex)
+			drawTile(tileMap.namedTiles[colArr[i].tile], tileMap.HScale * rowIndex, tileMap.WScale * colIndex)
 
 		}
 		i++;
@@ -45,12 +45,38 @@ function drawTile(tilePoint,x,y){
   ctx.drawImage(tileMap.img,tilePoint[0], tilePoint[1],tileMap.Width,tileMap.Height,x,y,tileMap.WScale, tileMap.HScale);
 }
 
+function destroyAtom(x,y,z,atom){
+	atom = null
+	map[x][y][z]=null
+}
+
+function spawnAtom(x,y,z,atom){
+	map[x][y][z]=atom}
+
+function transposeAtom(x,y,z,atom){
+	map[x][y][z]=null
+	map[atom.x][atom.y][atom.z]=atom
+}
+
 //Check if the target is occupied
-function collisionCheck(x,y,z){
+function collisionCheck(x,y,z,actor){
 	if ((typeof map[x]) != "undefined" ){
 		if((typeof map[x][y]) != "undefined"){
-			if((typeof map[x][y][z]) != "undefined" && (typeof map[x][y][z]) == null){				
-				return true;
+			if((typeof map[x][y][z]) != "undefined"){
+				if ((map[x][y][z]) == null){
+					return true;					
+				}
+				else{
+					actor.collisionAction(x,y,z,map[x][y][z])
+					if(map[x][y][z].health < 0){
+						map[x][y][z].deathAction()
+					}
+					map[x][y][z].collisionAction(actor.x,actor.y,actor.z,actor)
+					if(actor.health < 0){
+						actor.deathAction()
+					}
+					return false					
+				}
 			}
 			else{
 				return false
