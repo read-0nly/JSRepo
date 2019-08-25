@@ -76,6 +76,9 @@ class Actor extends Atom{
 		destroyAtom(this.x,this.y,this.z,this)
 		console.log ((this.getClass())+" Died")
 	}
+	getActorInfo(){		
+		return "<table class='actorStats'><tr><td colspan=2>["+this.getClass()+"]</td></tr><tr><td>Health:"+this.health+"</td><td>Dir:"+this.dir+"</td></tr></table>"
+	}
 }
 class Player extends Actor{
 

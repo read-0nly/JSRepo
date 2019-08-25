@@ -20,7 +20,6 @@ class Floor extends Tile{
 class Wall extends Tile{
 	constructor(x,y){
 		super(x,y,1,0,"wall",null)
-		this.collisionLayers.push("Actor")
 	}	
 }
 
@@ -28,8 +27,7 @@ class Flame extends Actor{
 	//Base type for a player - also binds keyset
 	constructor(x,y,health,damageModifier,baseDamage,tick){
 		super(x,y,2,3,"flame",null,health,damageModifier, baseDamage,tick)
-		this.collisionLayers.push("Player")
-		this.collisionLayers.push("Fire")
+		this.collisionLayers.push("Flame")
 	}
 	tickAction(self){
 		var i = 0;
@@ -43,7 +41,7 @@ class Flame extends Actor{
 			i++;
 		}
 		var i = 0;
-		console.log(self.getClass() + "ticked")
+		console.log(self.getClass() + " ticked")
 	}
 }
 

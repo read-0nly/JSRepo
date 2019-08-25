@@ -40,16 +40,10 @@ function drawStack(colArr, colIndex, rowIndex){
 			drawTile(tileMap.namedTiles[colArr[i].tile], tileMap.HScale * rowIndex, tileMap.WScale * colIndex)
 			if(colArr[i].getClass!=null){
 				if(colArr[i].getClass() == "Player"){
-					writeDebug(colArr[i].lastKey)
-					actorStatus += "[Player] Health:"+colArr[i].health+" - Dir:"+colArr[i].dir+"<br>"
+					writeDebug(colArr[i].lastKey) 
 				}
-				else if(colArr[i].getClass() == "Flame"){
-					writeDebug(colArr[i].lastKey)
-					actorStatus += "[Flame] Health:"+colArr[i].health+" - Dir:"+colArr[i].dir+"<br>"
-				}
-				else if(colArr[i].getClass() == "Actor"){
-					writeDebug(colArr[i].lastKey)
-					actorStatus += "[Actor] Health:"+colArr[i].health+" - Dir:"+colArr[i].dir+"<br>"
+				if(colArr[i].getActorInfo != null){
+					actorStatus += colArr[i].getActorInfo()
 				}
 			}
 		}
