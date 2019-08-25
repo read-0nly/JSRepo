@@ -1,5 +1,6 @@
 //DOM references
-debugElem=document.getElementById("debug");
+debugElem=document.getElementById("debugInfo");
+actorElem=document.getElementById("actorInfo");
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 
@@ -51,4 +52,11 @@ var keys = {
 function initEngine(loadedMap){
 	map = loadedMap
 	initMapEngine(map)
+}
+
+function writeDebug(msg){
+	debugElem.innerHTML = msg
+}
+function writeActor(msg){
+	actorElem.innerHTML = msg
 }

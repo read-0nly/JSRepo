@@ -84,6 +84,7 @@ class Player extends Actor{
 		super(x,y,z,dir,tile,collisionLayers,health,damageModifier, baseDamage,-1)
 		this.collisionLayers.push("Player")
 		this.keys = keys
+		this.lastKey=new Array("null",0)
 	}
 	collisionAction(ColX, ColY, ColZ, ColActor){
 		var actorClass = ColActor.getClass()
@@ -100,7 +101,7 @@ class Player extends Actor{
 	}
 	
 	check(e) {
-		debugElem.innerHTML = keys[e.keyCode];
+		player.lastKey = keys[e.keyCode];
 		if(player.keys[e.keyCode][1]=="PlayerMovement"){
 			doMove(player.keys[e.keyCode], player)
 		}

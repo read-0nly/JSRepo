@@ -1,15 +1,13 @@
 
 //It's nice to be able to enumerate by type as well, so lets make some helper objects for that
-actors = new Array()
-enemies = new Array()
 rays = new Array()
 walls = new Array()
 floors = new Array()
-actors.push(new Actor(8,8,1,3,"enemy",null,100,1,10))
+
+//Create player and add to list of actors
 player = new Player(1,1,1,3,"player",null,100,1,keys,10)
 actors.push(player)
-window.addEventListener('keyup',player.check,false);
-//Create player and add to list of actors
+actors.push(new Actor(8,8,1,3,"enemy",null,100,1,10))
 
 //Base Atom is meant to be generic as all hell. As such, extended classes for tile types and item types shouldn't be defined there. The Engine Config is meant to sit on top of the mapengine and atom to create the rest of the game logic from those parts.
 
@@ -56,7 +54,10 @@ function spawnFlame(x, y){
 
 function initGame(){
 	initEngine(mapAutoGen())	
+	window.addEventListener('keyup',player.check,false);
 }
+
+
 
 
 

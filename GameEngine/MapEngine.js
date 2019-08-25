@@ -1,19 +1,23 @@
+actors = new Array()
+enemies = new Array()
+var actorStatus = ""
 //Set the scale factor and initiate the draw loop
 function initMapEngine(map){
 	tileMap.WScale = tileMap.Width * scale;
 	tileMap.HScale = tileMap.Height * scale;
 	drawLoop = setInterval(drawMap, drawDelay, map);
 }
-
 //First step of drawing a frame - pull the rows and draw each row
 function drawMap(mapArr){
 	var i = 0;
+	actorStatus=""
 	while(i<mapArr.length){
 		if((typeof mapArr[i]) != "undefined" && mapArr[i] != null ){
 			drawRow(mapArr[i], i);
 		}
 		i++;
 	}
+	writeActor(actorStatus)
 }
 
 //In each row, pull each stack and draw the stack
@@ -34,7 +38,20 @@ function drawStack(colArr, colIndex, rowIndex){
 	while(i<colArr.length){
 		if((typeof colArr[i]) != "undefined" && colArr[i] != null ){
 			drawTile(tileMap.namedTiles[colArr[i].tile], tileMap.HScale * rowIndex, tileMap.WScale * colIndex)
-
+			if(colArr[i].getClass!=null){
+				if(colArr[i].getClass() == "Player"){
+					writeDebug(colArr[i].lastKey)
+					actorStatus += "[Player] Health:"+colArr[i].health+" - Dir:"+colArr[i].dir+"<br>"
+				}
+				else if(colArr[i].getClass() == "Flame"){
+					writeDebug(colArr[i].lastKey)
+					actorStatus += "[Flame] Health:"+colArr[i].health+" - Dir:"+colArr[i].dir+"<br>"
+				}
+				else if(colArr[i].getClass() == "Actor"){
+					writeDebug(colArr[i].lastKey)
+					actorStatus += "[Actor] Health:"+colArr[i].health+" - Dir:"+colArr[i].dir+"<br>"
+				}
+			}
 		}
 		i++;
 	}
