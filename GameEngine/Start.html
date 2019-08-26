@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html>
-<body onload="initGame()">
-
-		<canvas id="myCanvas" width="600" height="400" style="border:1px solid #d3d3d3;">
+<style>
+	.actorStats td{
+		background-color:red;
+		border: 1px solid black;
+		border-collapse: separate;
+		border-spacing: 15px;
+	}
+</style>
+<body onload="initGame(); " onResize = "document.getElementById('gameArea').width = window.innerWidth; document.getElementById('gameArea').height = window.innerHeight;">
+<div id="gameArea">
+		<canvas id="myCanvas" style="border:1px solid #d3d3d3; max-width:80%;max-height:80%; background-color:black;">
 			Your browser does not support the HTML5 canvas tag.
 		</canvas>
 		
 	<span style="visibility:default">
-		<h1>
+		<h3 onClick="flipSection('actorInfo')">
 			Actor Info
-		</h1>
-		<p id="actorInfo">
+		</h3>
+		<p id="actorInfo" style="display:none" onClick="flipSection('actorInfo')">
 			actorInfo
 		</p>
-		<h1>
+		<h3 onClick="flipSection('debugInfo')">
 			Debug Info
-		</h1>
-		<p id="debugInfo">
+		</h3>
+		<p id="debugInfo" style="display:none" onClick="flipSection('debugInfo')">
 			debugOutput
 		</p>
-		<p>
-			Image to use:
+		<h3 onClick="flipSection('tileMapInfo')">
+			TileMap Info
+		</h3>
+		<p id="tileMapInfo" style="display:none" onClick="flipSection('tileMapInfo')">
+			Image to use:<br>
+			<img id="tileset" src=".\tiles.png" alt="The Scream" >
 		</p>
-		<img id="tileset" src=".\tiles.png" alt="The Scream" >
 	</span>
 	
-	<script src="./Atom.js"></script>
-	<script src="./EngineConfig.js"></script>
-	<script src="./MapEngine.js"></script>
-	<script src="./ActorEngine.js"></script>
-	<script src="./Game.js"></script>
+
 	
+	<script src="./Engine.js"></script>
+	<script src="./EngineConfig.js"></script>
+	<script src="./Game.js"></script>
+</div>
 	
 </body>
 </html>

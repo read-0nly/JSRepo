@@ -1,16 +1,18 @@
 //DOM references
-debugElem=document.getElementById("debugInfo");
-actorElem=document.getElementById("actorInfo");
+var debugElem=document.getElementById("debugInfo");
+var actorElem=document.getElementById("actorInfo");
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
+var player
 
 //Base Parameters
 var scale = 1;
 var drawDelay = 50;
 var wrap = true;
 
-//Define the array that will hold the current map
-map = new Array()
+//Define the engines
+var mapEngine = null
+var actorEngine = null
 
 //TileMap definition (how do we chop up the image into separate tiles?)
 var tileMap = {
@@ -18,6 +20,8 @@ var tileMap = {
 	Height:30,
 	WScale:0,
 	HScale:0,
+	canvasWidth:0,
+	canvasHeight:0,
 	img : document.getElementById("tileset"),
 	namedTiles : {
 		"floor" : new Array(0,0),
@@ -45,18 +49,56 @@ var keys = {
 	39:new Array("Right", "PlayerMovement"),
 	32:new Array("Jump", "PlayerMovement"),
 	46:new Array("Fire", "PlayerAction"),
-	45:new Array("Menu", "UIAction"),
+	45:new Array("NextMenu", "UIAction"),
+	45:new Array("PrevMenu", "UIAction"),
+	45:new Array("NextItem", "UIAction"),
+	45:new Array("PrevItem", "UIAction"),
+	45:new Array("Select", "UIAction"),
+	16:new Array("Mod1", "Modifier",0),
+	17:new Array("Mod2", "Modifier",0),
+	18:new Array("Mod3", "Modifier",0),
+	
+}
+	
+window.addEventListener('keyup',checkUp,false);
+		
+function checkUp(e) {
+	actorEngine.player.lastKey = keys[e.keyCode];
+	if(actorEngine.player.keys[e.keyCode][1]=="PlayerMovement"){
+		actorEngine.doMove(actorEngine.player.keys[e.keyCode], actorEngine.player)
+	}
+	if(actorEngine.player.keys[e.keyCode][1]=="PlayerAction"){
+		actorEngine.doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
+	}
+}
+
+function checkDown(e) {
+	actorEngine.player.lastKey = actorEngine.player.keys[e.keyCode];
+	if(actorEngine.player.keys[e.keyCode][1]=="Modifier"){
+		doMove(actorEngine.player.keys[e.keyCode], actorEngine.player)
+	}
+	if(actorEngine.player.keys[e.keyCode][1]=="PlayerAction"){
+		doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
+	}
 }
 
 //Initiate the engine - create the automap (as a demo) then initiate the Map Engine to start the draw loop
-function initEngine(loadedMap){
-	map = loadedMap
-	initMapEngine(map)
+function initEngines(){
+	actorEngine = new JSGEactorEngine()
+	mapEngine = new JSGEmapEngine()
 }
 
-function writeDebug(msg){
-	debugElem.innerHTML = msg
+function loadLevel(loadedMap){
+	mapEngine.loadMap(loadedMap)
 }
-function writeActor(msg){
-	actorElem.innerHTML = msg
+
+function flipSection(id){
+	elem = document.getElementById(id)
+	if (elem.style["display"]=="none"){
+		elem.style = 'display:default'
+	}
+	else{
+		elem.style = 'display:none'
+	}
 }
+

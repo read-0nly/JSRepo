@@ -1,13 +1,9 @@
-
 //It's nice to be able to enumerate by type as well, so lets make some helper objects for that
 rays = new Array()
 walls = new Array()
 floors = new Array()
 
 //Create player and add to list of actors
-player = new Player(1,1,1,3,"player",null,100,1,keys,10)
-actors.push(player)
-actors.push(new Actor(8,8,1,3,"enemy",null,100,1,10))
 
 //Base Atom is meant to be generic as all hell. As such, extended classes for tile types and item types shouldn't be defined there. The Engine Config is meant to sit on top of the mapengine and atom to create the rest of the game logic from those parts.
 
@@ -31,7 +27,7 @@ class Flame extends Actor{
 	}
 	tickAction(self){
 		var i = 0;
-		var stack = map[self.x][self.y];
+		var stack = mapEngine.map[self.x][self.y];
 		while(i<stack.length){
 			if(stack[i] != null && (typeof stack[i] != "undefined")){
 				if((typeof stack[i].takeDamage) == "function"){
@@ -46,17 +42,26 @@ class Flame extends Actor{
 }
 
 function spawnFlame(x, y){	
-	spawnAtom(x,y,2, (new Flame(x,y,100,1,30,500)))
-	map[x][y][2].initAuto(map[x][y][2]);
+	mapEngine.spawnAtom(x,y,2, (new Flame(x,y,100,1,30,500)))
+	mapEngine.map[x][y][2].initAuto(mapEngine.map[x][y][2]);
 }
 
 function initGame(){
-	initEngine(mapAutoGen())	
-	window.addEventListener('keyup',player.check,false);
+	initEngines()	
+	mapEngine.loadMap(mapAutoGen())
+	
+	//generate Actors
+	actorEngine.player = new Player(1,1,1,3,"player",null,100,1,keys,10)
+	actorEngine.actors.push(actorEngine.player)
+	actorEngine.enemies.push(new Actor(8,8,1,3,"enemy",null,100,1,10))
+	actorEngine.actors.push(actorEngine.enemies[0])
+	var i = 0;
+	while(i<actorEngine.actors.length){
+		var p = actorEngine.actors[i]
+		mapEngine.spawnAtom(p.x,p.y,p.z,p)
+		i++;
+	}
 }
-
-
-
 
 
 //Demo map generator
@@ -85,9 +90,9 @@ while(i<mapWidth){
 			else{	
 				var l = 0
 				var actorFound = null
-				while (l < actors.length){					
-					if(i == actors[l].x && j == actors[l].y && k==1){
-						actorFound = actors[l]
+				while (l < actorEngine.actors.length){					
+					if(i == actorEngine.actors[l].x && j == actorEngine.actors[l].y && k==1){
+						actorFound = actorEngine.actors[l]
 					}	
 					l++;
 				}
