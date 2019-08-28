@@ -323,9 +323,16 @@ class Actor extends Atom{
 		this.baseDamage = baseDamage;
 		this.collisionLayers.push("Actor");
 		this.tick = tick
+		this.tickCycle= 0;
 	}
 	initAuto(self){
-		self.interval = setInterval(self.tickAction, self.tick, self);
+		self.tickCycle = setInterval(self.tickAction, self.tick, self);
+	}
+	collisionAction(ColX, ColY, ColZ, ColActor){
+		var actorClass = ColActor.getClass()
+		var selfClass = this.getClass()
+		console.log(selfClass + " collided with " + actorClass)
+		ColActor.health+= (0-this.baseDamage)*ColActor.damageModifier
 	}
 	takeDamage(damage){
 		this.health += 0-(damage*this.damageModifier)
@@ -348,10 +355,13 @@ class Actor extends Atom{
 	deathAction(){
 		clearInterval(this.interval)
 		mapEngine.destroyAtom(this.x,this.y,this.z,this)
+		this.x=-1;
+		this.y=-1;
+		this.z=-1;
 		console.log ((this.getClass())+" Died")
 	}
 	getActorInfo(){		
-		return "<table class='actorStats'><tr><td colspan=2>["+this.getClass()+"]</td></tr><tr><td>Health:"+this.health+"</td><td>Dir:"+this.dir+"</td></tr></table>"
+		return "["+this.getClass()+"]<br>Health:"+this.health+" - Dir:"+this.dir+"<br><br>"
 	}
 }
 class Player extends Actor{
@@ -363,12 +373,6 @@ class Player extends Actor{
 		this.keys = keys
 		this.lastKey=new Array("null",0)
 		this.self = this
-	}
-	collisionAction(ColX, ColY, ColZ, ColActor){
-		var actorClass = ColActor.getClass()
-		var selfClass = this.getClass()
-		console.log(selfClass + " collided with " + actorClass)
-		ColActor.health+= (0-this.baseDamage)*ColActor.damageModifier
 	}
 	deathAction(){
 		mapEngine.destroyAtom(this.x,this.y,this.z,this)
