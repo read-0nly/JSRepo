@@ -7,9 +7,9 @@ var mapWidth = 20;
 var mapHeight= 20;
 var mapDepth = 3;
 var dirVariance = 1;
-var minEnemies = 10;
-var maxEnemies = 20;
-var enemyTickSpeed = 500;
+var minEnemies = 0;
+var maxEnemies = 0;
+var enemyTickSpeed = 1000;
 
 
 //UI current Card
@@ -29,6 +29,45 @@ class Wall extends Tile{
 	constructor(x,y){
 		super(x,y,1,0,"wall",null)
 	}	
+}
+class Wand extends Item{
+	constructor(x,y){
+		super(x,y,1,1,"wand",null,1)
+		
+	}
+	
+}
+class FlameWand extends Wand{
+	
+	constructor(x,y){
+		super(x,y)
+		
+	}
+	fireAction(actor, mana){
+		var newX = actor.x;
+		var newY = actor.y;
+		switch(actor.dir){
+			case 1:
+				newY--;
+				break;
+			case 2:
+				newX++;
+				break;
+			case 3:
+				newY++;
+				break;
+			case 4:
+				newX--;
+				break;
+		}
+		spawnFlame(newX,newY,mana)
+		
+	}
+	dropAction(actor){
+		this.x=actor.x;
+		this.y=actor.y;
+		spawnAtom(actor.x,actor.y,actor.z, this)
+	}
 }
 class Flame extends Actor{
 	//Base type for a player - also binds keyset
@@ -52,19 +91,25 @@ class Flame extends Actor{
 	}
 }
 
-function spawnFlame(x, y){	
-	mapEngine.spawnAtom(x,y,2, (new Flame(x,y,100,1,30,500)))
+function spawnFlame(x, y, power){	
+	mapEngine.spawnAtom(x,y,2, (new Flame(x,y,100,1,power,500)))
 	mapEngine.map[x][y][2].initAuto(mapEngine.map[x][y][2]);
 }
 
 function initGame(){
 	initEngines()	
 	mapEngine.loadMap(mapAutoGen())
-	
+	Actor.prototype.fireAction = function fireAction(){
+		if(this.inventory[0]!=null)
+			if(typeof this.inventory[0] !="undefined"){
+				this.inventory[0].fireAction(this, this.spellMana)
+			}
+			
+	}
 	//generate Actors
 	actorEngine.player = new Player(1,1,1,3,"player",null,100,1,keys,10)
 	actorEngine.actors.push(actorEngine.player)
-	
+	actorEngine.player.inventory.push(new FlameWand(-1,-1))
 	var i = 0
 	
 	while(i < (getRdm(minEnemies,maxEnemies))){

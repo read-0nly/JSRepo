@@ -61,6 +61,7 @@ var keys = {
 }
 	
 window.addEventListener('keyup',checkUp,false);
+window.addEventListener('keyup',checkDown,false);
 		
 function checkUp(e) {
 	actorEngine.player.lastKey = keys[e.keyCode];
@@ -68,7 +69,20 @@ function checkUp(e) {
 		actorEngine.doMove(actorEngine.player.keys[e.keyCode], actorEngine.player)
 	}
 	if(actorEngine.player.keys[e.keyCode][1]=="PlayerAction"){
-		actorEngine.doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
+		if(actorEngine.player.keys[e.keyCode][0]=="Fire"){
+			var p = actorEngine.player
+			p.spellEnd = (new Date).getTime()
+			if(p.mana-((p.spellEnd-p.spellStart)/100)>0){
+				p.spellMana = ((p.spellEnd-p.spellStart)/25)
+				p.fireAction();
+			}
+			p.spellStart=0;		
+			p.spellEnd=0;
+			p.spellMana=0;
+		}
+		else{
+			actorEngine.doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
+		}
 	}
 }
 
@@ -78,7 +92,10 @@ function checkDown(e) {
 		doMove(actorEngine.player.keys[e.keyCode], actorEngine.player)
 	}
 	if(actorEngine.player.keys[e.keyCode][1]=="PlayerAction"){
-		doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
+		if(actorEngine.player.keys[e.keyCode][0]=="Fire"){
+			actorEngine.player.spellEnd = 0;
+			actorEngine.player.spellStart = (new Date).getTime()
+		}
 	}
 }
 

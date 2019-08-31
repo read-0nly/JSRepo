@@ -30,9 +30,7 @@ class JSGEactorEngine{
 		}
 		switch(act[0]){
 			case "Fire":
-				targetX = targetX+((actor.x-targetX)*3)
-				targetY = targetY+((actor.y-targetY)*3)
-				spawnFlame(targetX,targetY)
+				actor.fireAction();
 				break;
 			
 		}
@@ -201,8 +199,7 @@ class JSGEmapEngine{
 	drawTile(tilePoint,x,y){  
 	  ctx.drawImage(tileMap.img,tilePoint[0], tilePoint[1],tileMap.Width,tileMap.Height,x,y,tileMap.WScale, tileMap.HScale);
 	}
-	destroyAtom(x,y,z,atom){
-		atom = null
+	destroyAtom(x,y,z){
 		this.map[x][y][z]=null
 	}
 	spawnAtom(x,y,z,atom){
@@ -313,6 +310,7 @@ class Item extends Atom{
 		this.stack = stack
 	}
 	fireAction(){}
+	pickupAction(){}
 }
 class Actor extends Atom{
 	//Base type for an actor (represents an active entity with related properties like health)
@@ -324,6 +322,34 @@ class Actor extends Atom{
 		this.collisionLayers.push("Actor");
 		this.tick = tick
 		this.tickCycle= 0;
+		this.inventory = new Array();
+	}
+	pickup(item){
+		if(item.collisionLayers.find(function(element) {return element == "Item";}) != null){
+			this.inventory.push(item)
+			item.pickupAction()
+			item.x=-1;
+			item.y=-1;
+			destroyAtom(item)
+			switch(this.dir){
+				case 1:
+					doMove("Up",this)
+					break;
+				case 2:
+					doMove("Right",this)					
+					break;	
+				case 3:
+					doMove("Down",this)					
+					break;
+				case 4:
+					doMove("Left",this)					
+					break;
+			}
+			return true;
+		}
+		else{
+			return false
+		}
 	}
 	initAuto(self){
 		self.tickCycle = setInterval(self.tickAction, self.tick, self);
@@ -332,7 +358,9 @@ class Actor extends Atom{
 		var actorClass = ColActor.getClass()
 		var selfClass = this.getClass()
 		console.log(selfClass + " collided with " + actorClass)
-		ColActor.health+= (0-this.baseDamage)*ColActor.damageModifier
+		if(!this.pickup(colActor)){
+			ColActor.health+= (0-this.baseDamage)*ColActor.damageModifier
+		}
 	}
 	takeDamage(damage){
 		this.health += 0-(damage*this.damageModifier)
@@ -354,6 +382,7 @@ class Actor extends Atom{
 	}
 	deathAction(){
 		clearInterval(this.interval)
+		
 		mapEngine.destroyAtom(this.x,this.y,this.z,this)
 		this.x=-1;
 		this.y=-1;
