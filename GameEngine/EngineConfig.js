@@ -72,10 +72,17 @@ function checkUp(e) {
 		if(actorEngine.player.keys[e.keyCode][0]=="Fire"){
 			var p = actorEngine.player
 			p.spellEnd = (new Date).getTime()
-			if(p.mana-((p.spellEnd-p.spellStart)/100)>0){
-				p.spellMana = ((p.spellEnd-p.spellStart)/25)
-				p.fireAction();
+			if(((p.spellEnd-p.spellStart)/100)>100){
+				p.spellMana = 100
 			}
+			else{
+				p.spellMana = ((p.spellEnd-p.spellStart)/100)
+			}
+			if(p.mana-p.spellMana <0){
+				p.spellMana = p.mana
+			}
+			p.mana = p.mana - p.spellMana
+			p.fireAction();
 			p.spellStart=0;		
 			p.spellEnd=0;
 			p.spellMana=0;

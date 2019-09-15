@@ -46,8 +46,10 @@ class Wall extends Tile{
 	}	
 }
 class Wand extends Item{
-	constructor(x,y){
+	var flag = 0
+	constructor(x,y, f){
 		super(x,y,1,1,"wand",null,1)
+		flag=f
 		
 	}
 	
@@ -78,41 +80,14 @@ class FlameWand extends Wand{
 				newX--;
 				newX--;
 				break;
-		}
-		spawnFlame(newX,newY,mana)
-		
+		}		
+		mapEngine.spawnAtom(newX,newY,2,fireField)
 	}
 	dropAction(actor){
 		this.x=actor.x;
 		this.y=actor.y;
 		spawnAtom(actor.x,actor.y,actor.z, this)
 	}
-}
-class Flame extends Actor{
-	//Base type for a player - also binds keyset
-	constructor(x,y,health,damageModifier,baseDamage,tick){
-		super(x,y,2,3,"flame",null,health,damageModifier, baseDamage,tick)
-		this.collisionLayers.push("Flame")
-	}
-	tickAction(self){
-		var i = 0;
-		var stack = mapEngine.map[self.x][self.y];
-		while(i<stack.length){
-			if(stack[i] != null && (typeof stack[i] != "undefined")){
-				if((typeof stack[i].takeDamage) == "function"){
-					stack[i].takeDamage(self.baseDamage)
-				}
-			}
-			i++;
-		}
-		var i = 0;
-		console.log(self.getClass() + " ticked")
-	}
-}
-
-function spawnFlame(x, y, power){	
-	mapEngine.spawnAtom(x,y,2, (new Flame(x,y,100,1,power,500)))
-	mapEngine.map[x][y][2].initAuto(mapEngine.map[x][y][2]);
 }
 
 function initGame(){
