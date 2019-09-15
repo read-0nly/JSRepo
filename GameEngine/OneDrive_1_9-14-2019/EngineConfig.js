@@ -203,11 +203,19 @@ class LifeEntity extends Actor{
 	}
 	doMapTick(i,j){
 		lifeDamageTickDelay++;
+		lifeTickCount++;
 		if((lifeDamageTickDelay / lifeDamageTickTime) > 1){
 			lifeDamageTickDelay = 1;
 			if(mapEngine.map[i][j][1]!= null){
 				this.doMagic(mapEngine.map[i][j][1])
 			}			
+		}		
+	}
+	tryTick(){		
+		lifeTickCount++;
+		if((lifeTickCount > (lifeSpeed/drawDelay))){
+			lifeDraw()
+			lifeTickCount = 0
 		}
 	}
 	doMagic(actor){		
@@ -315,6 +323,10 @@ var enemyTickSpeed = 1000;
 var lifeDamageTickTime = 11;
 var lifeDamageTickFactor = 0.1
 var lifeSpeed = 3000;
+var lifeSpeedH = 9000;
+var lifeSpeedStep = 10;
+var lifeSpeedL = 50;
+var lifeTickCount = 0;
 var lifeDamageTickDelay = 1;
 //Define the engines
 var mapEngine = null
@@ -413,9 +425,7 @@ function initEngines(){
 	actorEngine = new JSGEactorEngine()
 	mapEngine = new JSGEmapEngine()
 
-	lifeInit()
 	
-	setInterval(lifeDraw,lifeSpeed)
 	
 }
 
@@ -435,6 +445,7 @@ function flipSection(id){
 
 function lifeTick(){
 	var i= 0;
+	lifeSpeed = lifeSpeedH
 	var newMap = new Array();
 	var pattern = new Array(
 		new Array(-1,-1),
@@ -496,6 +507,10 @@ function breedCell(newMap, flag,i,j,nb,negation,negator){
 					if((newMap[i][j] == negation || newMap[i][j] == 0)){
 						
 						newMap[i][j] = flag
+						lifeSpeed = lifeSpeed - lifeSpeedStep
+						if(lifeSpeed<lifeSpeedL){
+							lifeSpeed = lifeSpeedL
+						}
 					}
 					else{
 						newMap[i][j] = -1
@@ -509,6 +524,10 @@ function breedCell(newMap, flag,i,j,nb,negation,negator){
 				case 3:
 					if(newMap[i][j] == negation || newMap[i][j] == 0){
 						newMap[i][j] = flag
+						lifeSpeed = lifeSpeed - lifeSpeedStep
+						if(lifeSpeed<lifeSpeedL){
+							lifeSpeed = lifeSpeedL
+						}
 					}
 					else if(newMap[i][j] != negator){
 						newMap[i][j] = -1
@@ -626,6 +645,10 @@ function initGame(){
 	}
 	//generate Actors
 	actorEngine.player = new Player(1,1,1,3,"player",null,100,1,keys,10)
+	actorEngine.actors.push(earthField)
+	actorEngine.actors.push(fireField)
+	actorEngine.actors.push(airField)
+	actorEngine.actors.push(waterField)	
 	actorEngine.actors.push(actorEngine.player)
 	actorEngine.player.mana = 100
 	actorEngine.player.inventory.push(new FireWand(-1,-1))
@@ -633,6 +656,9 @@ function initGame(){
 	actorEngine.player.inventory.push(new AirWand(-1,-1))
 	actorEngine.player.inventory.push(new EarthWand(-1,-1))
 	loadLevel(mapAutoGen())
+	lifeInit()
+	//setInterval(lifeDraw,lifeSpeed)
+	mapEngine.startDraw()
 	var i = 0
 	
 	while(i < (getRdm(minEnemies,maxEnemies))){
@@ -641,7 +667,7 @@ function initGame(){
 		if (newX != actorEngine.player.x && newY != actorEngine.player.y){
 			var newEnemy = new Slime(newX,newY,1,1,enemyTickSpeed);
 			newEnemy.tickAction = AIMove;
-			newEnemy.initAuto(newEnemy);
+			//newEnemy.initAuto(newEnemy);
 			actorEngine.enemies.push(newEnemy);
 			actorEngine.actors.push(newEnemy);
 		}

@@ -157,9 +157,14 @@ class JSGEmapEngine{
 		this.transformW = ((c.width)/2)
 		this.transformH = ((c.height)/2)
 		ctx.translate(this.transformW-this.mapHalfW,this.transformH-this.mapHalfH)
-		this.drawLoop = setInterval(this.drawMap, drawDelay, this.self);
 	}
 	//First step of drawing a frame - pull the rows and draw each row
+	startDraw(){
+		this.drawLoop = setInterval(this.drawMap, drawDelay, this.self);
+	}
+	pauseDraw(){
+		clearInterval(this.drawLoop)
+	}
 	drawMap(self){
 		var i = 0;
 		actorEngine.actorStatus=""
@@ -168,6 +173,16 @@ class JSGEmapEngine{
 				self.drawRow(self.map[i], i);
 			}
 			i++;
+		}
+		i=0
+		while(i<actorEngine.actors.length){			
+			if(actorEngine.actors[i].getActorInfo != null){
+				actorEngine.actorStatus +=actorEngine.actors[i].getActorInfo()
+			}
+			if(actorEngine.actors[i].tryTick != null){
+				actorEngine.actors[i].tryTick()
+			}
+			i++
 		}
 		mapEngine.writeActor(actorEngine.actorStatus)
 	}
@@ -205,9 +220,6 @@ class JSGEmapEngine{
 					}
 					if(colArr[i].getClass() == "Player"){
 						this.writeDebug(colArr[i].lastKey) 
-					}
-					if(colArr[i].getActorInfo != null){
-						actorEngine.actorStatus += colArr[i].getActorInfo()
 					}
 				}
 			}
@@ -370,7 +382,14 @@ class Actor extends Atom{
 		}
 	}
 	initAuto(self){
-		self.tickCycle = setInterval(self.tickAction, self.tick, self);
+		//self.tickCycle = setInterval(self.tickAction, self.tick, self);
+	}
+	tryTick(){
+		this.tickCycle++
+		if(this.tickCycle > (this.tick/drawDelay)){
+			this.tickAction(this)
+			this.tickCycle = 0
+		}
 	}
 	collisionAction(ColX, ColY, ColZ, ColActor){
 		var actorClass = ColActor.getClass()
@@ -423,7 +442,7 @@ class Player extends Actor{
 
 	//Base type for a player - also binds keyset
 	constructor(x,y,z,dir,tile,collisionLayers,health,damageModifier,keys,baseDamage){
-		super(x,y,z,dir,tile,collisionLayers,health,damageModifier, baseDamage,-1)
+		super(x,y,z,dir,tile,collisionLayers,health,damageModifier, baseDamage,1000)
 		this.collisionLayers.push("Player")
 		this.keys = keys
 		this.lastKey=new Array("null",0)
