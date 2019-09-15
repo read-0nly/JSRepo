@@ -300,13 +300,13 @@ var waterField = new WaterField()
 var earthField = new EarthField()
 var airField = new AirField()
 //Base Parameters
-var scale = 1;
+var scale = 2;
 var drawDelay = 50;
 var wrap = true;
 var mapWidth = 40;
 var mapHeight= 40;
-var viewportHeight=10;
-var viewportWidth=10;
+var viewportHeight=20;
+var viewportWidth=25;
 var mapDepth = 3;
 var dirVariance = 1;
 var minEnemies = 10;
