@@ -283,8 +283,8 @@ class WaterField extends LifeEntity{
 	doMagic(actor){		
 		if((typeof actor.health) == "number"){
 			console.log(actor.health + "health")
-			actor.takeDamage(-2*lifeDamageTickFactor)
-			actor.takeManaDamage(-2*lifeDamageTickFactor)
+			actor.takeDamage(-5*lifeDamageTickFactor)
+			actor.takeManaDamage(-10*lifeDamageTickFactor)
 		}				
 	}
 }
@@ -393,7 +393,6 @@ function checkUp(e) {
 		if(actorEngine.player.keys[e.keyCode][0]=="Fire"){
 			var p = actorEngine.player
 			p.fireAction();
-			p.mana=p.mana-10;
 		}
 		else{
 			actorEngine.doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
@@ -637,9 +636,13 @@ function drawLifeTile(i,j,map, type) {
 function initGame(){
 	initEngines()	
 	Actor.prototype.fireAction = function fireAction(){
+		this.manacost = 1
 		if(this.inventory[0]!=null)
 			if(typeof this.inventory[0] !="undefined"){
-				this.inventory[0].fireAction(this, 10)
+				if(this.mana>this.manacost){
+					this.inventory[0].fireAction(this, this.manacost)
+					this.mana=this.mana-this.manacost
+				}
 			}
 			
 	}

@@ -344,7 +344,9 @@ class Actor extends Atom{
 	constructor(x,y,z,dir,tile,collisionLayers,health,damageModifier, baseDamage, tick){
 		super(x,y,z,dir,tile,collisionLayers)
 		this.health = health;
+		this.maxHealth = health;
 		this.mana = 100;
+		this.maxMana = this.mana;
 		this.damageModifier = damageModifier;
 		this.baseDamage = baseDamage;
 		this.collisionLayers.push("Actor");
@@ -404,9 +406,18 @@ class Actor extends Atom{
 		if(this.health<0){
 			this.deathAction()
 		}
+		if(this.health>this.maxHealth){
+			this.health=this.maxHealth
+		}
 	}
 	takeManaDamage(damage){
 		this.mana += 0-(damage*this.damageModifier)
+		if(this.mana<0){
+			this.mana=0
+		}
+		if(this.mana>this.maxMana){
+			this.mana=this.maxMana
+		}
 	}
 	tickAction(self){		
 		console.log ((self.getClass())+" Ticked")
