@@ -511,9 +511,6 @@ function breedCell(newMap, flag,i,j,nb,negation,negator){
 						if(lifeSpeed<lifeSpeedL){
 							lifeSpeed = lifeSpeedL
 						}
-						if(mapEngine.map[i][j][1] != null){
-							mapEngine.map[i][j][1]
-						}
 					}
 					else{
 						newMap[i][j] = -1
@@ -550,15 +547,27 @@ function lifeDraw(){
 			switch(fieldMap[i][j]){
 			case 8:
 				mapEngine.spawnAtom(i,j,2,earthField)
+				if(mapEngine.map[i][j][1]!=null){
+					mapEngine.map[i][j][2].doMagic(mapEngine.map[i][j][1])
+				}
 				break;
 			case 4:
 				mapEngine.spawnAtom(i,j,2,airField)
+				if(mapEngine.map[i][j][1]!=null){
+					mapEngine.map[i][j][2].doMagic(mapEngine.map[i][j][1])
+				}
 				break;
 			case 2:
 				mapEngine.spawnAtom(i,j,2,fireField)
+				if(mapEngine.map[i][j][1]!=null){
+					mapEngine.map[i][j][2].doMagic(mapEngine.map[i][j][1])
+				}
 				break;
 			case 1:
 				mapEngine.spawnAtom(i,j,2,waterField)
+				if(mapEngine.map[i][j][1]!=null){
+					mapEngine.map[i][j][2].doMagic(mapEngine.map[i][j][1])
+				}
 				break;
 				
 			default:
