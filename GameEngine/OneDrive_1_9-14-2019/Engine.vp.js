@@ -136,10 +136,16 @@ class JSGEactorEngine{
 }
 class JSGEmapEngine{
 	//Set the scale factor and initiate the draw loop
-	constructor(){	
+	constructor(){		
 		
 	}
-	
+    getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+    }
 	distanceCheck(focuspt,x,y){
 		return new Array((x-focuspt.x),(y-focuspt.y))
 	}
@@ -245,6 +251,11 @@ class JSGEmapEngine{
 			if((typeof this.map[x][y]) != "undefined"){
 				if((typeof this.map[x][y][z]) != "undefined"){
 					if ((this.map[x][y][z]) == null){
+						if(this.map[x][y][z+1] != null){
+							if(this.map[x][y][z+1].collisionAction != null){
+								this.map[x][y][z+1].collisionAction(x,y,z,actor)
+							}
+						}
 						return true;					
 					}
 					else{
@@ -422,7 +433,7 @@ class Actor extends Atom{
 	tickAction(self){		
 		console.log ((self.getClass())+" Ticked")
 	}
-	fireAction(){
+	fireAction(x,y){
 		console.log ((this.getClass())+" Fired")
 	}
 	jumpAction(newZ) {

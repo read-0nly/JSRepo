@@ -57,10 +57,10 @@ class FireWand extends Wand{
 	constructor(x,y){
 		super(x,y,2)
 	}
-	fireAction(actor, mana){
-		var newX = actor.x;
-		var newY = actor.y;
-		switch(actor.dir){
+	fireAction(actor, mana,x, y){
+		var newX = x;
+		var newY = y;
+		/* switch(actor.dir){
 			case 1:
 				newY--;
 				newY--;
@@ -77,7 +77,7 @@ class FireWand extends Wand{
 				newX--;
 				newX--;
 				break;
-		}		
+		}		 */
 		mapEngine.spawnAtom(newX,newY,2,fireField)
 		drawLifeTile(newX,newY,fieldMap,this.flag)
 	}
@@ -92,10 +92,10 @@ class WaterWand extends Wand{
 	constructor(x,y){
 		super(x,y,1)
 	}
-	fireAction(actor, mana){
-		var newX = actor.x;
-		var newY = actor.y;
-		switch(actor.dir){
+	fireAction(actor, mana,x,y){
+		var newX = x;
+		var newY = y;
+		/* switch(actor.dir){
 			case 1:
 				newY--;
 				newY--;
@@ -112,7 +112,7 @@ class WaterWand extends Wand{
 				newX--;
 				newX--;
 				break;
-		}		
+		}		 */
 		mapEngine.spawnAtom(newX,newY,2,fireField)
 		drawLifeTile(newX,newY,fieldMap,this.flag)
 	}
@@ -127,27 +127,9 @@ class EarthWand extends Wand{
 	constructor(x,y){
 		super(x,y,8)
 	}
-	fireAction(actor, mana){
-		var newX = actor.x;
-		var newY = actor.y;
-		switch(actor.dir){
-			case 1:
-				newY--;
-				newY--;
-				break;
-			case 2:
-				newX++;
-				newX++;
-				break;
-			case 3:
-				newY++;
-				newY++;
-				break;
-			case 4:
-				newX--;
-				newX--;
-				break;
-		}		
+	fireAction(actor, mana,x,y){
+		var newX = x;
+		var newY = y;
 		mapEngine.spawnAtom(newX,newY,2,fireField)
 		drawLifeTile(newX,newY,fieldMap,this.flag)
 	}
@@ -162,27 +144,9 @@ class AirWand extends Wand{
 	constructor(x,y){
 		super(x,y,4)
 	}
-	fireAction(actor, mana){
-		var newX = actor.x;
-		var newY = actor.y;
-		switch(actor.dir){
-			case 1:
-				newY--;
-				newY--;
-				break;
-			case 2:
-				newX++;
-				newX++;
-				break;
-			case 3:
-				newY++;
-				newY++;
-				break;
-			case 4:
-				newX--;
-				newX--;
-				break;
-		}		
+	fireAction(actor, mana,x,y){
+		var newX = x;
+		var newY = y;
 		mapEngine.spawnAtom(newX,newY,2,fireField)
 		drawLifeTile(newX,newY,fieldMap,this.flag)
 	}
@@ -220,6 +184,9 @@ class LifeEntity extends Actor{
 	}
 	doMagic(actor){		
 		console.log(this.getClass()+" ticked at "+i+" : "+j+" on obj "+actor.getClass())
+	}
+	collisionAction(x,y,z,actor){
+		this.doMagic(actor)
 	}
 }
 class EarthField extends LifeEntity{
@@ -308,12 +275,12 @@ var waterField = new WaterField()
 var earthField = new EarthField()
 var airField = new AirField()
 //Base Parameters
-var scale = 2;
+var scale = 1;
 var drawDelay = 50;
 var wrap = true;
 var mapWidth = 40;
 var mapHeight= 40;
-var viewportHeight=20;
+var viewportHeight=25;
 var viewportWidth=25;
 var mapDepth = 3;
 var dirVariance = 1;
@@ -322,10 +289,10 @@ var maxEnemies = 20;
 var enemyTickSpeed = 1000;
 var lifeDamageTickTime = 11;
 var lifeDamageTickFactor = 0.1
-var lifeSpeed = 3000;
-var lifeSpeedH = 9000;
-var lifeSpeedStep = 10;
-var lifeSpeedL = 50;
+var lifeSpeed = 10000;
+var lifeSpeedH = 10000;
+var lifeSpeedStep = 5;
+var lifeSpeedL = 10;
 var lifeTickCount = 0;
 var lifeDamageTickDelay = 1;
 //Define the engines
@@ -382,7 +349,20 @@ var keys = {
 	
 window.addEventListener('keyup',checkUp,false);
 window.addEventListener('keyup',checkDown,false);
-		
+c.addEventListener('mousemove', function(evt) {
+	mapEngine.mousePos = mapEngine.getMousePos(c, evt);
+	
+}, false);	  
+c.addEventListener('click', function(e) {
+	var normalX = (mapEngine.mousePos.x - tileMap.canvasWidth/2)
+	var normalY = (mapEngine.mousePos.y - tileMap.canvasHeight/2)
+	var normalPercentX = normalX/(tileMap.canvasWidth/2)
+	var normalPercentY = normalY/(tileMap.canvasHeight/2)
+	var spellX = Math.floor(normalPercentX*(viewportWidth/2)+0.5)+actorEngine.player.x
+	var spellY = Math.floor(normalPercentY*(viewportHeight/2)+0.5)+actorEngine.player.y	
+	actorEngine.player.fireAction(spellX,spellY)
+	
+}, 0);
 function checkUp(e) {
 	actorEngine.player.lastKey = keys[e.keyCode];
 	console.log(e.keyCode+" Pressed")
@@ -392,7 +372,28 @@ function checkUp(e) {
 	if(actorEngine.player.keys[e.keyCode][1]=="PlayerAction"){
 		if(actorEngine.player.keys[e.keyCode][0]=="Fire"){
 			var p = actorEngine.player
-			p.fireAction();
+			var newX = actor.x;
+			var newY = actor.y;
+			switch(actor.dir){
+				case 1:
+					newY--;
+					newY--;
+					break;
+				case 2:
+					newX++;
+					newX++;
+					break;
+				case 3:
+					newY++;
+					newY++;
+					break;
+				case 4:
+					newX--;
+					newX--;
+					break;
+			}		
+
+			p.fireAction(newX,newY);
 		}
 		else{
 			actorEngine.doAction(actorEngine.player.keys[e.keyCode], actorEngine.player)
@@ -509,6 +510,9 @@ function breedCell(newMap, flag,i,j,nb,negation,negator){
 						lifeSpeed = lifeSpeed - lifeSpeedStep
 						if(lifeSpeed<lifeSpeedL){
 							lifeSpeed = lifeSpeedL
+						}
+						if(mapEngine.map[i][j][1] != null){
+							mapEngine.map[i][j][1]
 						}
 					}
 					else{
@@ -635,12 +639,12 @@ function drawLifeTile(i,j,map, type) {
 
 function initGame(){
 	initEngines()	
-	Actor.prototype.fireAction = function fireAction(){
+	Actor.prototype.fireAction = function fireAction(x,y){
 		this.manacost = 1
 		if(this.inventory[0]!=null)
 			if(typeof this.inventory[0] !="undefined"){
 				if(this.mana>this.manacost){
-					this.inventory[0].fireAction(this, this.manacost)
+					this.inventory[0].fireAction(this, this.manacost,x,y)
 					this.mana=this.mana-this.manacost
 				}
 			}
